@@ -23,7 +23,7 @@ public class ProfessorController {
     }
 
     @PostMapping
-    public ResponseEntity<Professor> createProfessor(@RequestBody Professor professor) {
+    public ResponseEntity<Professor> criarProfessor(@RequestBody Professor professor) {
         Professor novoProfessor = professorRepository.save(professor);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProfessor);
     }
@@ -35,7 +35,7 @@ public class ProfessorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Professor> updateProfessor(@PathVariable Long id, @RequestBody Professor professorAtualizado) {
+    public ResponseEntity<Professor> atualizarProfessor(@PathVariable Long id, @RequestBody Professor professorAtualizado) {
         if (!professorRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -45,7 +45,7 @@ public class ProfessorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProfessor(@PathVariable Long id) {
+    public ResponseEntity<Void> apagarProfessor(@PathVariable Long id) {
         if (!professorRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

@@ -30,7 +30,7 @@ public class AlunoController {
     }
 
     @PostMapping
-    public ResponseEntity<Aluno> createAluno(@RequestBody Aluno aluno) {
+    public ResponseEntity<Aluno> criarAluno(@RequestBody Aluno aluno) {
         Aluno novoAluno = alunoRepository.save(aluno);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoAluno);
     }
@@ -42,7 +42,7 @@ public class AlunoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Aluno> updateAluno(@PathVariable Long id, @RequestBody Aluno alunoAtualizado) {
+    public ResponseEntity<Aluno> atualizarAluno(@PathVariable Long id, @RequestBody Aluno alunoAtualizado) {
         if (!alunoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -52,7 +52,7 @@ public class AlunoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAluno(@PathVariable Long id) {
+    public ResponseEntity<Void> apagarAluno(@PathVariable Long id) {
         if (!alunoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

@@ -23,7 +23,7 @@ public class CursoController {
     }
 
     @PostMapping
-    public ResponseEntity<Curso> createCurso(@RequestBody Curso curso) {
+    public ResponseEntity<Curso> criarCurso(@RequestBody Curso curso) {
         Curso novoCurso = cursoRepository.save(curso);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCurso);
     }
@@ -35,7 +35,7 @@ public class CursoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Curso> updateCurso(@PathVariable Long id, @RequestBody Curso cursoAtualizado) {
+    public ResponseEntity<Curso> atualizarCurso(@PathVariable Long id, @RequestBody Curso cursoAtualizado) {
         if (!cursoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -45,7 +45,7 @@ public class CursoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCurso(@PathVariable Long id) {
+    public ResponseEntity<Void> apagarCurso(@PathVariable Long id) {
         if (!cursoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
