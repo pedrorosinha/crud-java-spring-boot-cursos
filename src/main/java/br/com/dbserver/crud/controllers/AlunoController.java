@@ -1,62 +1,48 @@
 package br.com.dbserver.crud.controllers;
 
 import br.com.dbserver.crud.modelos.Aluno;
-import br.com.dbserver.crud.repositories.AlunoRepository;
+import br.com.dbserver.crud.services.AlunoService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/alunos")
 public class AlunoController {
 
     @Autowired
-    private AlunoRepository alunoRepository;
+    private AlunoService alunoService;
 
     @GetMapping
     public ResponseEntity<List<Aluno>> getAllAlunos() {
-        List<Aluno> alunos = alunoRepository.findAll();
+        List<Aluno> alunos = alunoService.listarAlunos();
         return ResponseEntity.ok(alunos);
     }
 
     @PostMapping
     public ResponseEntity<Aluno> criarAluno(@RequestBody Aluno aluno) {
-        Aluno novoAluno = alunoRepository.save(aluno);
+        Aluno novoAluno = alunoService.criarAluno(aluno);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoAluno);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Aluno> getAlunoById(@PathVariable Long id) {
-        Optional<Aluno> alunoOptional = alunoRepository.findById(id);
+        Optional<Aluno> alunoOptional = alunoService.buscarAlunoPorId(id);
         return alunoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Aluno> atualizarAluno(@PathVariable Long id, @RequestBody Aluno alunoAtualizado) {
-        if (!alunoRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
         alunoAtualizado.setId(id);
-        Aluno aluno = alunoRepository.save(alunoAtualizado);
+        Aluno aluno = alunoService.atualizarAluno(alunoAtualizado);
         return ResponseEntity.ok(aluno);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> apagarAluno(@PathVariable Long id) {
-        if (!alunoRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        alunoRepository.deleteById(id);
+        alunoService.apagarAluno(id);
         return ResponseEntity.noContent().build();
     }
 }

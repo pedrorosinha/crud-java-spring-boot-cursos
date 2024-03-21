@@ -1,5 +1,6 @@
 package br.com.dbserver.crud.modelos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +32,7 @@ public class Curso {
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
+    @JsonIgnore
     private Professor professor;
 
     @OneToMany(mappedBy = "curso")
