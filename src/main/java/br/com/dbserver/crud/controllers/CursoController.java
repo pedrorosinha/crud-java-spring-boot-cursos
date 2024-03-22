@@ -7,6 +7,7 @@ import br.com.dbserver.crud.dto.ProfessorDTO;
 import br.com.dbserver.crud.modelos.Aluno;
 import br.com.dbserver.crud.modelos.Curso;
 import br.com.dbserver.crud.modelos.Professor;
+import br.com.dbserver.crud.services.AlunoService;
 import br.com.dbserver.crud.services.CursoService;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class CursoController {
 
     @Autowired
     private CursoService cursoService;
+    
+    @Autowired
+    private AlunoService alunoService;
 
     @GetMapping("/{id}/detalhes")
     public ResponseEntity<CursoDetalhesDTO> getCursoDetalhes(@PathVariable Long id) {
@@ -77,6 +81,23 @@ public class CursoController {
     public ResponseEntity<Curso> criarCurso(@RequestBody Curso curso) {
         Curso novoCurso = cursoService.criarCurso(curso);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCurso);
+    }
+    
+    @PostMapping("/{id}/alunos")
+    public ResponseEntity<Curso> adicionarAlunoAoCurso(@PathVariable Long id, @RequestBody Aluno aluno) {
+        Optional<Curso> cursoOptional = cursoService.buscarCursoPorId(id);
+        if (cursoOptional.isPresent()) {
+            Curso curso = cursoOptional.get();
+            aluno.setCurso(curso);
+
+            Aluno novoAluno = alunoService.criarAluno(aluno);
+            curso.getAlunos().add(novoAluno);
+            cursoService.atualizarCurso(curso);
+
+            return ResponseEntity.ok(curso);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{id}")
