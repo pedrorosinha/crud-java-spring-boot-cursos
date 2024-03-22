@@ -1,10 +1,14 @@
 package br.com.dbserver.crud.controllers;
 
+import br.com.dbserver.crud.dto.AlunoDTO;
 import br.com.dbserver.crud.dto.CursoDTO;
+import br.com.dbserver.crud.dto.CursoDetalhesDTO;
 import br.com.dbserver.crud.dto.ProfessorDTO;
+import br.com.dbserver.crud.modelos.Aluno;
 import br.com.dbserver.crud.modelos.Curso;
 import br.com.dbserver.crud.modelos.Professor;
 import br.com.dbserver.crud.services.CursoService;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +24,37 @@ public class CursoController {
     @Autowired
     private CursoService cursoService;
 
-    @GetMapping
-    public ResponseEntity<List<Curso>> getAllCursos() {
-        List<Curso> cursos = cursoService.listarCursos();
-        return ResponseEntity.ok(cursos);
+    @GetMapping("/{id}/detalhes")
+    public ResponseEntity<CursoDetalhesDTO> getCursoDetalhes(@PathVariable Long id) {
+        Optional<Curso> cursoOptional = cursoService.buscarCursoPorId(id);
+        if (cursoOptional.isPresent()) {
+            Curso curso = cursoOptional.get();
+
+            CursoDetalhesDTO cursoDetalhesDTO = new CursoDetalhesDTO();
+            cursoDetalhesDTO.setId(curso.getId());
+            cursoDetalhesDTO.setNome(curso.getNome());
+
+            Professor professor = curso.getProfessor();
+            if (professor != null) {
+                ProfessorDTO professorDTO = new ProfessorDTO();
+                professorDTO.setId(professor.getId());
+                professorDTO.setNome(professor.getNome());
+                cursoDetalhesDTO.setProfessor(professorDTO);
+            }
+
+            List<AlunoDTO> alunosDTO = new ArrayList<>();
+            for (Aluno aluno : curso.getAlunos()) {
+                AlunoDTO alunoDTO = new AlunoDTO();
+                alunoDTO.setId(aluno.getId());
+                alunoDTO.setNome(aluno.getNome());
+                alunosDTO.add(alunoDTO);
+            }
+            cursoDetalhesDTO.setAlunos(alunosDTO);
+
+            return ResponseEntity.ok(cursoDetalhesDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     private CursoDTO convertToDTO(Curso curso) {
