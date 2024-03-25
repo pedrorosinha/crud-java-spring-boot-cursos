@@ -6,6 +6,7 @@ import br.com.dbserver.crud.services.AlunoService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,15 +28,25 @@ public class AlunoControllerTest {
     @InjectMocks
     private AlunoController alunoController;
 
-    @Test
-    public void testGetAllAlunos() {
-        // Arrange
-        List<Aluno> alunos = new ArrayList<>();
-        Curso curso = new Curso();
+    private Curso curso;
+    private Aluno aluno1;
+    private Aluno aluno2;
+
+    @BeforeEach
+    public void setUp() {
+        curso = new Curso();
         curso.setId(1L);
         curso.setNome("Curso de Teste");
-        alunos.add(new Aluno(1L, "João", curso));
-        alunos.add(new Aluno(2L, "Maria", curso));
+
+        aluno1 = new Aluno(1L, "João", curso);
+        aluno2 = new Aluno(2L, "Maria", curso);
+    }
+
+    @Test
+    public void testGetAllAlunos() {
+        List<Aluno> alunos = new ArrayList<>();
+        alunos.add(aluno1);
+        alunos.add(aluno2);
         when(alunoService.listarAlunos()).thenReturn(alunos);
 
         ResponseEntity<List<Aluno>> responseEntity = alunoController.getAllAlunos();
@@ -47,15 +58,12 @@ public class AlunoControllerTest {
 
     @Test
     public void testCriarAluno() {
-        Curso curso = new Curso();
-        curso.setId(1L);
-        Aluno aluno = new Aluno(1L, "João", curso);
-        when(alunoService.criarAluno(any(Aluno.class))).thenReturn(aluno);
+        when(alunoService.criarAluno(any(Aluno.class))).thenReturn(aluno1);
 
-        ResponseEntity<Aluno> responseEntity = alunoController.criarAluno(aluno);
+        ResponseEntity<Aluno> responseEntity = alunoController.criarAluno(aluno1);
 
         assert responseEntity.getStatusCode() == HttpStatus.CREATED;
-        assert responseEntity.getBody().equals(aluno);
+        assert responseEntity.getBody().equals(aluno1);
 
     }
 
@@ -70,17 +78,14 @@ public class AlunoControllerTest {
 
     @Test
     public void testAtualizarAluno() {
-        Curso curso = new Curso();
-        curso.setId(1L);
-        Aluno aluno = new Aluno(1L, "João", curso);
-        when(alunoService.atualizarAluno(any(Aluno.class))).thenReturn(aluno);
+        when(alunoService.atualizarAluno(any(Aluno.class))).thenReturn(aluno1);
 
-        ResponseEntity<Aluno> responseEntity = alunoController.atualizarAluno(1L, aluno);
+        ResponseEntity<Aluno> responseEntity = alunoController.atualizarAluno(1L, aluno1);
 
         assert responseEntity.getStatusCode() == HttpStatus.OK;
-        assert responseEntity.getBody().equals(aluno);
+        assert responseEntity.getBody().equals(aluno1);
     }
-    
+
     @Test
     public void testApagarAluno() {
         ResponseEntity<Void> responseEntity = alunoController.apagarAluno(1L);
